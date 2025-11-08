@@ -1,20 +1,13 @@
 #  4-5주차 오픈 미션: 런닝 인터벌 앱
 
-Vite, React, TypeScript, Styled-Components를 활용하여 인터벌 트레이닝을 돕는 웹 애플리케이션을 구현합니다.
-
----
-
-## 사용 기술 스택
-
-- Core: React.js, TypeScript
-- Bundler: Vite
-- Styling: Styled-Components
-- Linting/Formatting: ESLint, Prettier
-- Testing: Jest, React Testing Library
-
----
-
 ## 기능 목록
+
+### 0. 메인 레이아웃 및 공통 기능
+
+- [x] React Router를 사용하여 페이지 라우팅을 구현한다.
+- [x] 공통 헤더 및 푸터를 구현한다.
+    - [x] 헤더에 '러닝 인터벌 앱' 타이틀을 표시한다.
+    - [x] 푸터에 '러닝' 페이지와 '기록' 페이지로 이동할 수 있는 네비게이션(탭)을 구현한다.
 
 ### 1. 러닝 페이지 (메인 타이머)
 
