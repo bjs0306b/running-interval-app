@@ -1,10 +1,8 @@
 import styled from "styled-components";
 
 export const LayoutWrapper = styled.div`
-  background: white;
   min-height: 100dvh;
   min-width: 100dvw;
-  overflow-x: hidden;
 `;
 
 export const Header = styled.header`
