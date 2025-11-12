@@ -4,6 +4,7 @@ import {
   useSettingTimeStore,
   useRepeatStore,
 } from "../store/timeStore";
+import { useRecordStore } from "../store/recordStore";
 import SettingModal from "../components/SettingModal";
 import { FaVolumeUp } from "react-icons/fa";
 import { MdVibration } from "react-icons/md";
@@ -21,14 +22,20 @@ import {
 } from "../styling/Runningpage.styled";
 
 const RunningPage: React.FC = () => {
-  const { minutes, seconds, setMinutes, setSeconds } = useTimerStore();
-  const {
-    runningTimeMinutes,
-    runningTimeSeconds,
-    restTimeMinutes,
-    restTimeSeconds,
-  } = useSettingTimeStore();
-  const { repeatCount } = useRepeatStore();
+  const minutes = useTimerStore((state) => state.minutes);
+  const seconds = useTimerStore((state) => state.seconds);
+  const setMinutes = useTimerStore((state) => state.setMinutes);
+  const setSeconds = useTimerStore((state) => state.setSeconds);
+  const runningTimeMinutes = useSettingTimeStore(
+    (state) => state.runningTimeMinutes
+  );
+  const runningTimeSeconds = useSettingTimeStore(
+    (state) => state.runningTimeSeconds
+  );
+  const restTimeMinutes = useSettingTimeStore((state) => state.restTimeMinutes);
+  const restTimeSeconds = useSettingTimeStore((state) => state.restTimeSeconds);
+  const repeatCount = useRepeatStore((state) => state.repeatCount);
+  const addRecord = useRecordStore((state) => state.addRecord);
 
   const [currentRepeat, setCurrentRepeat] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +46,7 @@ const RunningPage: React.FC = () => {
   const [isMuted, setIsMuted] = useState(false);
 
   const playNotificationSound = () => {
-    if(isMuted){
+    if (isMuted) {
       triggerVibration();
       return;
     }
@@ -52,7 +59,7 @@ const RunningPage: React.FC = () => {
   };
 
   const triggerVibration = () => {
-    if("vibrate" in navigator && !isMuted) {
+    if ("vibrate" in navigator && !isMuted) {
       navigator.vibrate(500);
     }
   };
@@ -105,6 +112,13 @@ const RunningPage: React.FC = () => {
 
             if (nextRepeat === 0) {
               setIsTimerActive(false);
+              addRecord({
+                runningTimeMinutes,
+                runningTimeSeconds,
+                restTimeMinutes,
+                restTimeSeconds,
+                repeatCount,
+              });
               setIsRunning(true);
               setMinutes(runningTimeMinutes);
               setSeconds(runningTimeSeconds);
