@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const RecordPageContainer = styled.div`
   height: 100%;
   padding: 1rem;
-  overflow-y: auto; // 기록이 많아지면 스크롤
+  overflow-y: auto;
   background-color: #f7f7f7;
 `;
 

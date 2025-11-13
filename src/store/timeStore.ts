@@ -3,8 +3,11 @@ import { create } from "zustand";
 interface TimerState {
   minutes: number;
   seconds: number;
+  isTimerActive: boolean;
   setMinutes: (minutes: number) => void;
   setSeconds: (seconds: number) => void;
+  toggleTimer: () => void;
+  stopTimer: () => void;
 }
 
 interface SettingTimeState {
@@ -26,8 +29,11 @@ interface RepeatState {
 export const useTimerStore = create<TimerState>((set) => ({
   minutes: 0,
   seconds: 0,
+  isTimerActive: false,
   setMinutes: (minutes) => set({ minutes }),
   setSeconds: (seconds) => set({ seconds }),
+  toggleTimer: () => set((state) => ({ isTimerActive: !state.isTimerActive })),
+  stopTimer: () => set({ isTimerActive: false }),
 }));
 
 export const useSettingTimeStore = create<SettingTimeState>((set) => ({

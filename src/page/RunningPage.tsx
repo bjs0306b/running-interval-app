@@ -1,24 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+
+// zustand store
 import {
   useTimerStore,
   useSettingTimeStore,
   useRepeatStore,
 } from "../store/timeStore";
 import { useRecordStore } from "../store/recordStore";
-import SettingModal from "../components/SettingModal";
-import { FaVolumeUp } from "react-icons/fa";
-import { MdVibration } from "react-icons/md";
+import { useAudioStore } from "../store/audioStore";
+import { useRunStateStore } from "../store/runStateStore";
 
+// components
+import StartButton from "../components/StartButton";
+import SilentButton from "../components/SilentButton";
+import SettingButton from "../components/SettingButton";
+import SettingModal from "../components/SettingModal";
+import ResetButton from "../components/ResetButton";
+
+// styled components
 import {
   RunningPageContainer,
   TimerWrapper,
   ClockContainer,
   ClockTime,
-  SettingButton,
-  StartButton,
-  SilentButton,
   RepeatCount,
-  ResetButton,
 } from "../styling/Runningpage.styled";
 
 const RunningPage: React.FC = () => {
@@ -26,6 +31,8 @@ const RunningPage: React.FC = () => {
   const seconds = useTimerStore((state) => state.seconds);
   const setMinutes = useTimerStore((state) => state.setMinutes);
   const setSeconds = useTimerStore((state) => state.setSeconds);
+  const isTimerActive = useTimerStore((state) => state.isTimerActive);
+  const stopTimer = useTimerStore((state) => state.stopTimer);
   const runningTimeMinutes = useSettingTimeStore(
     (state) => state.runningTimeMinutes
   );
@@ -36,61 +43,25 @@ const RunningPage: React.FC = () => {
   const restTimeSeconds = useSettingTimeStore((state) => state.restTimeSeconds);
   const repeatCount = useRepeatStore((state) => state.repeatCount);
   const addRecord = useRecordStore((state) => state.addRecord);
-
-  const [currentRepeat, setCurrentRepeat] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isTimerActive, setIsTimerActive] = useState(false);
-  const [isRunning, setIsRunning] = useState(true);
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [audioBuffer, setAudioBuffer] = useState<AudioBuffer | null>(null);
-  const [isMuted, setIsMuted] = useState(false);
-
-  const playNotificationSound = () => {
-    if (isMuted) {
-      triggerVibration();
-      return;
-    }
-    if (!audioContext || !audioBuffer) return;
-
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(audioContext.destination);
-    source.start(0);
-  };
-
-  const triggerVibration = () => {
-    if ("vibrate" in navigator && !isMuted) {
-      navigator.vibrate(500);
-    }
-  };
-
-  const reset = () => {
-    setIsTimerActive(false);
-    setIsRunning(true);
-    setMinutes(runningTimeMinutes);
-    setSeconds(runningTimeSeconds);
-    setCurrentRepeat(repeatCount);
-  };
-
-  const handleStartPause = () => {
-    if (!audioContext) {
-      const context = new window.AudioContext();
-      setAudioContext(context);
-    }
-    setIsTimerActive(!isTimerActive);
-  };
+  const playNotification = useAudioStore((state) => state.playNotification);
+  const currentRepeat = useRunStateStore((state) => state.currentRepeat);
+  const setCurrentRepeat = useRunStateStore((state) => state.setCurrentRepeat);
+  const isRunning = useRunStateStore((state) => state.isRunning);
+  const setIsRunning = useRunStateStore((state) => state.setIsRunning);
 
   useEffect(() => {
     setMinutes(runningTimeMinutes);
     setSeconds(runningTimeSeconds);
     setCurrentRepeat(repeatCount);
-    setIsTimerActive(false);
+    stopTimer();
   }, [
     runningTimeMinutes,
     runningTimeSeconds,
     setMinutes,
     setSeconds,
     repeatCount,
+    setCurrentRepeat,
+    stopTimer,
   ]);
 
   useEffect(() => {
@@ -105,13 +76,14 @@ const RunningPage: React.FC = () => {
           setSeconds(59);
         } else {
           // 시간이 0이 되었을 때 (달리기 - 휴식 전환)
-          playNotificationSound();
+
+          playNotification();
           if (isRunning) {
             const nextRepeat = currentRepeat - 1;
             setCurrentRepeat(nextRepeat);
 
             if (nextRepeat === 0) {
-              setIsTimerActive(false);
+              stopTimer();
               addRecord({
                 runningTimeMinutes,
                 runningTimeSeconds,
@@ -119,30 +91,27 @@ const RunningPage: React.FC = () => {
                 restTimeSeconds,
                 repeatCount,
               });
-              setIsRunning(true);
               setMinutes(runningTimeMinutes);
               setSeconds(runningTimeSeconds);
+              setCurrentRepeat(repeatCount);
               return;
             }
           }
-          setIsRunning((prevIsRunning) => {
-            const nextIsRunning = !prevIsRunning;
-            if (nextIsRunning) {
-              // 다음 상태가 '달리기'일 때 (휴식 -> 달리기)
-              setMinutes(runningTimeMinutes);
-              setSeconds(runningTimeSeconds);
-            } else {
-              // 다음 상태가 '휴식'일 때 (달리기 -> 휴식)
-              setMinutes(restTimeMinutes);
-              setSeconds(restTimeSeconds);
-            }
-            return nextIsRunning;
-          });
+
+          const nextIsRunning = !isRunning;
+          setIsRunning(nextIsRunning);
+
+          if (nextIsRunning) {
+            setMinutes(runningTimeMinutes);
+            setSeconds(runningTimeSeconds);
+          } else {
+            setMinutes(restTimeMinutes);
+            setSeconds(restTimeSeconds);
+          }
         }
       }, 1000);
     }
 
-    // 컴포넌트 언마운트 또는 isTimerActive가 false가 되면 interval 정리
     return () => clearInterval(interval);
   }, [
     isTimerActive,
@@ -150,61 +119,33 @@ const RunningPage: React.FC = () => {
     seconds,
     isRunning,
     currentRepeat,
-    restTimeMinutes,
-    restTimeSeconds,
-    runningTimeMinutes,
-    runningTimeSeconds,
     setMinutes,
     setSeconds,
+    setCurrentRepeat,
+    setIsRunning,
+    stopTimer,
+    playNotification,
+    addRecord,
+    runningTimeMinutes,
+    runningTimeSeconds,
+    restTimeMinutes,
+    restTimeSeconds,
+    repeatCount,
   ]);
-
-  useEffect(() => {
-    if (!audioContext) return;
-
-    const loadSound = async () => {
-      try {
-        const response = await fetch("/notification.wav");
-        const arrayBuffer = await response.arrayBuffer();
-        const buffer = await audioContext.decodeAudioData(arrayBuffer);
-        setAudioBuffer(buffer);
-      } catch (error) {
-        console.error("Error loading sound:", error);
-      }
-    };
-
-    loadSound();
-  }, [audioContext]);
 
   return (
     <RunningPageContainer>
       <TimerWrapper>
-        <SilentButton onClick={() => setIsMuted(!isMuted)}>
-          {isMuted ? <MdVibration size="2em" /> : <FaVolumeUp size="2rem" />}
-        </SilentButton>
-
+        <SilentButton />
         <ClockContainer>
           <RepeatCount>{currentRepeat}</RepeatCount>
           <ClockTime>{minutes}</ClockTime>:<ClockTime>{seconds}</ClockTime>
         </ClockContainer>
-
-        <SettingButton onClick={() => setIsModalOpen(true)}>
-          setting
-        </SettingButton>
-        <ResetButton
-          onClick={() => {
-            reset();
-          }}
-        >
-          Reset
-        </ResetButton>
-        <StartButton onClick={handleStartPause}>
-          {isTimerActive ? "Pause" : "Start"}
-        </StartButton>
+        <SettingButton />
+        <ResetButton />
+        <StartButton />
       </TimerWrapper>
-      <SettingModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <SettingModal />
     </RunningPageContainer>
   );
 };

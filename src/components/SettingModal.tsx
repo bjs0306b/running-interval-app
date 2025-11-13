@@ -1,6 +1,10 @@
 import React from "react";
-import { useSettingTimeStore, useRepeatStore } from "../store/timeStore";
 
+// zustand store
+import { useSettingTimeStore, useRepeatStore } from "../store/timeStore";
+import { useUiStore } from "../store/uiStore";
+
+// styled components
 import {
   ModalOverlay,
   ModalWrapper,
@@ -12,12 +16,7 @@ import {
   RepeatInput,
 } from "../styling/SettingModal.styled";
 
-interface SettingModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const SettingModal: React.FC<SettingModalProps> = ({ isOpen, onClose }) => {
+const SettingModal: React.FC = () => {
   const {
     runningTimeMinutes,
     runningTimeSeconds,
@@ -28,7 +27,11 @@ const SettingModal: React.FC<SettingModalProps> = ({ isOpen, onClose }) => {
     setRestTimeMinutes,
     setRestTimeSeconds,
   } = useSettingTimeStore();
-  const { repeatCount, setRepeatCount } = useRepeatStore();
+
+  const repeatCount = useRepeatStore((state) => state.repeatCount);
+  const setRepeatCount = useRepeatStore((state) => state.setRepeatCount);
+  const isOpen = useUiStore((state) => state.isSettingModalOpen);
+  const onClose = useUiStore((state) => state.closeSettingModal);
 
   if (!isOpen) {
     return null;
@@ -75,7 +78,12 @@ const SettingModal: React.FC<SettingModalProps> = ({ isOpen, onClose }) => {
         </TimeContainer>
         <ModalContent> 반복 횟수 설정 </ModalContent>
         <TimeContainer>
-          <RepeatInput type="number" min="1" value={repeatCount} onChange={(e) => setRepeatCount(Number(e.target.value))} />
+          <RepeatInput
+            type="number"
+            min="1"
+            value={repeatCount}
+            onChange={(e) => setRepeatCount(Number(e.target.value))}
+          />
         </TimeContainer>
         <CloseButton onClick={onClose}>닫기</CloseButton>
       </ModalWrapper>

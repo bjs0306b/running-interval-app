@@ -1,5 +1,9 @@
 import React from "react";
+
+// zustand store
 import { useRecordStore } from "../store/recordStore";
+
+// styled components
 import {
   RecordPageContainer,
   RecordList,
@@ -10,7 +14,6 @@ import {
   NoRecords,
 } from "../styling/RecordPage.styled";
 
-// 숫자를 항상 두 자리로 포맷팅하는 헬퍼 함수 (e.g., 5 -> "05")
 const formatTime = (time: number) => time.toString().padStart(2, "0");
 
 const RecordPage: React.FC = () => {
