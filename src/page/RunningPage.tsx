@@ -139,7 +139,8 @@ const RunningPage: React.FC = () => {
         <SilentButton />
         <ClockContainer>
           <RepeatCount>{currentRepeat}</RepeatCount>
-          <ClockTime>{minutes}</ClockTime>:<ClockTime>{seconds}</ClockTime>
+          <ClockTime data-testid="clock-time-m">{minutes}</ClockTime>:
+          <ClockTime data-testid="clock-time-s">{seconds}</ClockTime>
         </ClockContainer>
         <SettingButton />
         <ResetButton />
