@@ -19,6 +19,7 @@ export const RecordCard = styled.li`
   padding: 1rem;
   margin-bottom: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
 `;
 
 export const RecordDate = styled.div`
@@ -45,4 +46,20 @@ export const NoRecords = styled.div`
   height: 100%;
   color: #888;
   font-size: 1.2rem;
+`;
+
+export const DeleteButton = styled.button`
+  position: absolute; /* 위치를 부모 기준으로 설정 */
+  top: 0.5rem; /* 위에서부터의 거리 */
+  right: 0.75rem; /* 오른쪽에서부터의 거리 */
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #aaa;
+  cursor: pointer;
+  line-height: 1;
+
+  &:hover {
+    color: #333;
+  }
 `;

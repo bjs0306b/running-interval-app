@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // zustand store
 import { useRecordStore } from "../store/recordStore";
@@ -12,12 +12,14 @@ import {
   RecordStats,
   StatItem,
   NoRecords,
+  DeleteButton,
 } from "../styling/RecordPage.styled";
 
 const formatTime = (time: number) => time.toString().padStart(2, "0");
 
 const RecordPage: React.FC = () => {
   const records = useRecordStore((state) => state.records);
+  const deleteRecord = useRecordStore((state) => state.deleteRecord);
 
   return (
     <RecordPageContainer>
@@ -27,6 +29,7 @@ const RecordPage: React.FC = () => {
         <RecordList>
           {records.map((record) => (
             <RecordCard key={record.id}>
+              <DeleteButton onClick={() => deleteRecord(record.id)}>X</DeleteButton>
               <RecordDate>{record.date}</RecordDate>
               <RecordStats>
                 <StatItem>
