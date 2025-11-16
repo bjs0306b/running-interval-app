@@ -24,6 +24,7 @@ import {
   ClockContainer,
   ClockTime,
   RepeatCount,
+  CountDownTime,
 } from "../styling/Runningpage.styled";
 
 const RunningPage: React.FC = () => {
@@ -48,6 +49,11 @@ const RunningPage: React.FC = () => {
   const setCurrentRepeat = useRunStateStore((state) => state.setCurrentRepeat);
   const isRunning = useRunStateStore((state) => state.isRunning);
   const setIsRunning = useRunStateStore((state) => state.setIsRunning);
+  const isCountDown = useRunStateStore((state) => state.isCountDown);
+  const setIsCountDown = useRunStateStore((state) => state.setIsCountDown);
+  const countDown = useRunStateStore((state) => state.countDown);
+  const setCountDown = useRunStateStore((state) => state.setCountDown);
+  const toggleTimer = useTimerStore((state) => state.toggleTimer);
 
   useEffect(() => {
     setMinutes(runningTimeMinutes);
@@ -62,12 +68,21 @@ const RunningPage: React.FC = () => {
     repeatCount,
     setCurrentRepeat,
     stopTimer,
+    setIsCountDown,
   ]);
 
   useEffect(() => {
     let interval: number | undefined = undefined;
 
-    if (isTimerActive && currentRepeat > 0) {
+    if (isCountDown && countDown > 0) {
+      interval = window.setInterval(() => {
+        setCountDown(countDown - 1);
+      }, 1000);
+    } else if (isCountDown && countDown === 0) {
+      setIsCountDown(false);
+      toggleTimer();
+      setCountDown(3);
+    } else if (isTimerActive && currentRepeat > 0) {
       interval = window.setInterval(() => {
         if (seconds > 0) {
           setSeconds(seconds - 1);
@@ -114,34 +129,45 @@ const RunningPage: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [
+    isCountDown,
+    countDown,
     isTimerActive,
+    currentRepeat,
     minutes,
     seconds,
     isRunning,
-    currentRepeat,
-    setMinutes,
-    setSeconds,
-    setCurrentRepeat,
-    setIsRunning,
-    stopTimer,
-    playNotification,
-    addRecord,
     runningTimeMinutes,
     runningTimeSeconds,
     restTimeMinutes,
     restTimeSeconds,
     repeatCount,
+    setMinutes,
+    setSeconds,
+    setCurrentRepeat,
+    setIsRunning,
+    setIsCountDown,
+    setCountDown,
+    stopTimer,
+    playNotification,
+    addRecord,
+    toggleTimer,
   ]);
 
   return (
     <RunningPageContainer>
       <TimerWrapper>
         <SilentButton />
-        <ClockContainer>
-          <RepeatCount>{currentRepeat}</RepeatCount>
-          <ClockTime data-testid="clock-time-m">{minutes}</ClockTime>:
-          <ClockTime data-testid="clock-time-s">{seconds}</ClockTime>
-        </ClockContainer>
+        {isCountDown ? (
+          <ClockContainer>
+            <CountDownTime>{countDown}</CountDownTime>
+          </ClockContainer>
+        ) : (
+          <ClockContainer>
+            <RepeatCount>{currentRepeat}</RepeatCount>
+            <ClockTime data-testid="clock-time-m">{String(minutes).padStart(2, "0")}</ClockTime>:
+            <ClockTime data-testid="clock-time-s">{String(seconds).padStart(2, "0")}</ClockTime>
+          </ClockContainer>
+        )}
         <SettingButton />
         <ResetButton />
         <StartButton />

@@ -89,3 +89,12 @@ export const SilentButton = styled(CircleButton)`
   top: -2rem;
   right: -0rem;
 `;
+
+export const CountDownTime = styled(CircleButton)`
+  position: absolute;
+  width: 12rem;
+  height: 12rem;
+  font-size: 10rem;
+  background-color: #f0f0f0;
+  border: none;
+`;

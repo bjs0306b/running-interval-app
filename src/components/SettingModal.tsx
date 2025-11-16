@@ -46,7 +46,7 @@ const SettingModal: React.FC = () => {
             type="number"
             min="0"
             max="59"
-            value={runningTimeMinutes}
+            value={String(runningTimeMinutes).padStart(2, "0")}
             onChange={(e) => setRunningTimeMinutes(Number(e.target.value))}
           />{" "}
           <h2>:</h2>
@@ -54,7 +54,7 @@ const SettingModal: React.FC = () => {
             type="number"
             min="0"
             max="59"
-            value={runningTimeSeconds}
+            value={String(runningTimeSeconds).padStart(2, "0")}
             onChange={(e) => setRunningTimeSeconds(Number(e.target.value))}
           />
         </TimeContainer>
@@ -64,7 +64,7 @@ const SettingModal: React.FC = () => {
             type="number"
             min="0"
             max="59"
-            value={restTimeMinutes}
+            value={String(restTimeMinutes).padStart(2, "0")}
             onChange={(e) => setRestTimeMinutes(Number(e.target.value))}
           />{" "}
           <h2>:</h2>
@@ -72,7 +72,7 @@ const SettingModal: React.FC = () => {
             type="number"
             min="0"
             max="59"
-            value={restTimeSeconds}
+            value={String(restTimeSeconds).padStart(2, "0")}
             onChange={(e) => setRestTimeSeconds(Number(e.target.value))}
           />
         </TimeContainer>
