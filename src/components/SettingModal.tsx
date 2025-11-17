@@ -3,6 +3,7 @@ import React from "react";
 // zustand store
 import { useSettingTimeStore, useRepeatStore } from "../store/timeStore";
 import { useUiStore } from "../store/uiStore";
+import { usePresetStore, type Preset } from "../store/presetStore";
 
 // styled components
 import {
@@ -14,24 +15,71 @@ import {
   SecondInput,
   TimeContainer,
   RepeatInput,
+  PresetSection,
+  PresetList,
+  PresetItem,
+  PresetName,
+  PresetTitle,
+  PresetDetails,
+  SavePresetContainer,
+  SavePresetInput,
+  SavePresetButton,
+  DeleteButton,
 } from "../styling/SettingModal.styled";
 
 const SettingModal: React.FC = () => {
-  const {
-    runningTimeMinutes,
-    runningTimeSeconds,
-    restTimeMinutes,
-    restTimeSeconds,
-    setRunningTimeMinutes,
-    setRunningTimeSeconds,
-    setRestTimeMinutes,
-    setRestTimeSeconds,
-  } = useSettingTimeStore();
+  const runningTimeMinutes = useSettingTimeStore(
+    (state) => state.runningTimeMinutes
+  );
+  const setRunningTimeMinutes = useSettingTimeStore(
+    (state) => state.setRunningTimeMinutes
+  );
+  const runningTimeSeconds = useSettingTimeStore(
+    (state) => state.runningTimeSeconds
+  );
+  const setRunningTimeSeconds = useSettingTimeStore(
+    (state) => state.setRunningTimeSeconds
+  );
+  const restTimeMinutes = useSettingTimeStore((state) => state.restTimeMinutes);
+  const setRestTimeMinutes = useSettingTimeStore(
+    (state) => state.setRestTimeMinutes
+  );
+  const restTimeSeconds = useSettingTimeStore((state) => state.restTimeSeconds);
+  const setRestTimeSeconds = useSettingTimeStore(
+    (state) => state.setRestTimeSeconds
+  );
 
   const repeatCount = useRepeatStore((state) => state.repeatCount);
   const setRepeatCount = useRepeatStore((state) => state.setRepeatCount);
   const isOpen = useUiStore((state) => state.isSettingModalOpen);
   const onClose = useUiStore((state) => state.closeSettingModal);
+
+  const presets = usePresetStore((state) => state.presets);
+  const addPreset = usePresetStore((state) => state.addPreset);
+  const deletePreset = usePresetStore((state) => state.deletePreset);
+
+  const [presetName, setPresetName] = React.useState("");
+
+  const handleSavePreset = () => {
+    addPreset({
+      name: presetName,
+      runningTimeMinutes,
+      runningTimeSeconds,
+      restTimeMinutes,
+      restTimeSeconds,
+      repeatCount,
+    });
+    setPresetName("");
+  };
+
+  const handleApplyPreset = (preset: Preset) => {
+    setRunningTimeMinutes(preset.runningTimeMinutes);
+    setRunningTimeSeconds(preset.runningTimeSeconds);
+    setRestTimeMinutes(preset.restTimeMinutes);
+    setRestTimeSeconds(preset.restTimeSeconds);
+    setRepeatCount(preset.repeatCount);
+    onClose();
+  };
 
   if (!isOpen) {
     return null;
@@ -40,6 +88,7 @@ const SettingModal: React.FC = () => {
   return (
     <ModalOverlay>
       <ModalWrapper>
+        <CloseButton onClick={onClose}>x</CloseButton>
         <ModalContent> 러닝 시간 설정 </ModalContent>
         <TimeContainer>
           <MinuteInput
@@ -85,7 +134,43 @@ const SettingModal: React.FC = () => {
             onChange={(e) => setRepeatCount(Number(e.target.value))}
           />
         </TimeContainer>
-        <CloseButton onClick={onClose}>닫기</CloseButton>
+        <SavePresetContainer>
+          <SavePresetInput
+            type="text"
+            placeholder="프리셋 이름"
+            value={presetName}
+            onChange={(e) => setPresetName(e.target.value)}
+          />
+          <SavePresetButton onClick={handleSavePreset}>프리셋 저장</SavePresetButton>
+        </SavePresetContainer>
+        <PresetSection>
+          <ModalContent> 프리셋 </ModalContent>
+          <PresetList>
+            {presets.map((preset) => (
+              <PresetItem key={preset.id}>
+                <PresetName onClick={() => handleApplyPreset(preset)}>
+                  {/* preset.name 부분만 PresetTitle로 감싸줍니다. */}
+                  <PresetTitle>{preset.name}</PresetTitle>
+                  {/* 나머지 설명 부분은 PresetDetails로 감싸줍니다. */}
+                  <PresetDetails>
+                    {`(러닝: ${String(
+                      preset.runningTimeMinutes
+                    ).padStart(2, "0")}:${String(
+                      preset.runningTimeSeconds
+                    ).padStart(2, "0")}, 휴식: ${String(
+                      preset.restTimeMinutes
+                    ).padStart(2, "0")}:${String(
+                      preset.restTimeSeconds
+                    ).padStart(2, "0")}, 반복: ${preset.repeatCount}회)`}
+                  </PresetDetails>
+                </PresetName>
+                <DeleteButton onClick={() => deletePreset(preset.id)}>
+                  ×
+                </DeleteButton>
+              </PresetItem>
+            ))}
+          </PresetList>
+        </PresetSection>
       </ModalWrapper>
     </ModalOverlay>
   );

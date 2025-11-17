@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 // zustand store
 import { useRecordStore } from "../store/recordStore";

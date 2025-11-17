@@ -49,9 +49,9 @@ export const NoRecords = styled.div`
 `;
 
 export const DeleteButton = styled.button`
-  position: absolute; /* 위치를 부모 기준으로 설정 */
-  top: 0.5rem; /* 위에서부터의 거리 */
-  right: 0.75rem; /* 오른쪽에서부터의 거리 */
+  position: absolute; 
+  top: 0.5rem; 
+  right: 0.75rem; 
   background: none;
   border: none;
   font-size: 1.5rem;
