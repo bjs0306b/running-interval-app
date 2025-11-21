@@ -149,9 +149,7 @@ const SettingModal: React.FC = () => {
             {presets.map((preset) => (
               <PresetItem key={preset.id}>
                 <PresetName onClick={() => handleApplyPreset(preset)}>
-                  {/* preset.name 부분만 PresetTitle로 감싸줍니다. */}
                   <PresetTitle>{preset.name}</PresetTitle>
-                  {/* 나머지 설명 부분은 PresetDetails로 감싸줍니다. */}
                   <PresetDetails>
                     {`(러닝: ${String(
                       preset.runningTimeMinutes
