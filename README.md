@@ -1,21 +1,48 @@
 # 4-5주차 오픈 미션: 런닝 인터벌 앱
 
-## 개요
+> React와 Zustand를 활용하여 개발한 사용자 맞춤형 모바일 인터벌 트레이닝 타이머입니다.
 
-이번 미션에서는 React와 Zustand를 활용하여 '러닝 인터벌 앱'을 개발합니다. 이 앱은 사용자가 설정한 달리기 및 휴식 시간을 반복하는 타이머 기능을 제공하며, 완료된 러닝 세션의 기록을 로컬 스토리지에 저장하여 조회할 수 있는 기능도 포함합니다. 또한, 사용자 경험을 향상시키기 위해 알림음 및 진동 기능을 구현하고, 코드 구조 개선과 테스트 코드 작성에도 중점을 둡니다.
+<br/>
 
-모바일 웹 어플리케이션 입니다. 
+<p align="center">
+  <a href="https://running-interval-app.vercel.app/">
+    <img src="https://img.shields.io/badge/🔗-배포%20링크-5e8cfd?style=for-the-badge" alt="배포 링크"/>
+  </a>
+  <a href="https://velog.io/@bjs0306b/%EC%9A%B0%ED%85%8C%EC%BD%94-45%EC%A3%BC%EC%B0%A8">
+    <img src="https://img.shields.io/badge/📝-개발%20블로그-00C7B7?style=for-the-badge" alt="개발 블로그"/>
+  </a>
+</p>
 
-chrome에서 실행하는 것을 권장합니다. (진동 기능 지원)
+## 1. 프로젝트 소개
 
-npm run dev를 통해 실행 가능합니다.
+**러닝 인터벌 앱**은 사용자가 자신만의 인터벌 트레이닝 루틴을 설정하고 실행할 수 있도록 돕는 모바일 웹 애플리케이션입니다. 사용자가 설정한 운동 및 휴식 시간을 반복하는 핵심 타이머 기능을 중심으로, 운동 기록 저장, 프리셋 관리, 사용자 가이드 등 다양한 편의 기능을 제공하여 운동 경험을 향상시키는 것을 목표로 합니다.
 
-npm run test를 통해 테스트 코드를 실행할 수 있습니다.
+권장 환경: 진동(Vibration) API 등 모든 기능의 정상 동작을 위해 모바일 Chrome 브라우저에서 실행하는 것을 권장합니다.
 
-https://running-interval-app.vercel.app/ 배포 링크입니다.
+## 2. 주요 기술 스택
 
-https://velog.io/write?id=bb91a42b-4541-4ed7-af1b-043745209895 개발 과정을 담은 블로그 글입니다.
+- **Framework**: React
+- **Language**: TypeScript
+- **State Management**: Zustand
+- **Styling**: Styled-components
+- **Testing**: Jest, React Testing Library
 
+## 3. 설치 및 실행 방법
+
+**Node.js** 환경이 필요합니다.
+
+```bash
+# 1. 프로젝트 클론 및 의존성 설치
+git clone https://github.com/bjs0306b/running-interval-app
+cd running-interval-app
+npm install
+
+# 2. 개발 서버 실행
+npm run dev
+
+# 3. 테스트 코드 실행
+npm run test.
+```
 
 ## 기능 목록
 
