@@ -88,7 +88,7 @@ const SettingModal: React.FC = () => {
   return (
     <ModalOverlay>
       <ModalWrapper>
-        <CloseButton onClick={onClose}>x</CloseButton>
+        <CloseButton onClick={onClose} data-testid="setting-close-button">x</CloseButton>
         <ModalContent> 러닝 시간 설정 </ModalContent>
         <TimeContainer>
           <MinuteInput
@@ -141,7 +141,9 @@ const SettingModal: React.FC = () => {
             value={presetName}
             onChange={(e) => setPresetName(e.target.value)}
           />
-          <SavePresetButton onClick={handleSavePreset}>프리셋 저장</SavePresetButton>
+          <SavePresetButton onClick={handleSavePreset}>
+            프리셋 저장
+          </SavePresetButton>
         </SavePresetContainer>
         <PresetSection>
           <ModalContent> 프리셋 </ModalContent>
@@ -151,15 +153,19 @@ const SettingModal: React.FC = () => {
                 <PresetName onClick={() => handleApplyPreset(preset)}>
                   <PresetTitle>{preset.name}</PresetTitle>
                   <PresetDetails>
-                    {`(러닝: ${String(
-                      preset.runningTimeMinutes
-                    ).padStart(2, "0")}:${String(
-                      preset.runningTimeSeconds
-                    ).padStart(2, "0")}, 휴식: ${String(
-                      preset.restTimeMinutes
-                    ).padStart(2, "0")}:${String(
-                      preset.restTimeSeconds
-                    ).padStart(2, "0")}, 반복: ${preset.repeatCount}회)`}
+                    {`(러닝: ${String(preset.runningTimeMinutes).padStart(
+                      2,
+                      "0"
+                    )}:${String(preset.runningTimeSeconds).padStart(
+                      2,
+                      "0"
+                    )}, 휴식: ${String(preset.restTimeMinutes).padStart(
+                      2,
+                      "0"
+                    )}:${String(preset.restTimeSeconds).padStart(
+                      2,
+                      "0"
+                    )}, 반복: ${preset.repeatCount}회)`}
                   </PresetDetails>
                 </PresetName>
                 <DeleteButton onClick={() => deletePreset(preset.id)}>

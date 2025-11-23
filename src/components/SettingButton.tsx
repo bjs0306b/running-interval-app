@@ -9,7 +9,7 @@ import { SettingButton as StyledSettingButton } from "../styling/Runningpage.sty
 const SettingButton: React.FC = () => {
   const openSettingModal = useUiStore((state) => state.openSettingModal);
   return (
-    <StyledSettingButton onClick={openSettingModal}>
+    <StyledSettingButton onClick={openSettingModal} data-testid="setting-button">
       setting
     </StyledSettingButton>
   );

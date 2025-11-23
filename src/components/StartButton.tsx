@@ -28,7 +28,7 @@ const StartButton: React.FC = () => {
   };
 
   return (
-    <StyledStartButton onClick={handleClick}>
+    <StyledStartButton onClick={handleClick} data-testid="start-button">
       {isTimerActive || isCountDown ? "Pause" : "Start"}
     </StyledStartButton>
   );

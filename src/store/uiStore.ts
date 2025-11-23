@@ -5,7 +5,6 @@ interface UiState {
     isSettingModalOpen: boolean;
     openSettingModal: () => void;
     closeSettingModal: () => void;
-    
 }
 
 interface TutorialState {

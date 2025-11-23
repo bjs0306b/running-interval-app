@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { jest } from "@jest/globals";
 
@@ -8,14 +8,21 @@ import RecordPage from "../src/page/RecordPage";
 
 let mockRecords: any[] = [];
 
+const mockDeleteRecord = jest.fn();
+
 jest.mock("../src/store/recordStore", () => ({
   useRecordStore: (selector: (state: { records: any[] }) => any) => {
-    const state = { records: mockRecords };
+    const state = { records: mockRecords, deleteRecord: mockDeleteRecord };
     return selector ? selector(state) : state;
   },
 }));
 
 describe("RecordPage", () => {
+
+  beforeEach(() => {
+    mockDeleteRecord.mockClear();
+  });
+
   describe("기록이 없을 때", () => {
     beforeEach(() => {
       mockRecords = [];
@@ -77,6 +84,17 @@ describe("RecordPage", () => {
       expect(
         screen.queryByText("아직 기록이 없습니다.")
       ).not.toBeInTheDocument();
+    });
+
+    test("삭제 버튼 클릭 시 해당 기록이 삭제된다", () => {
+
+      render(<RecordPage />);
+
+      const deleteButtons = screen.getAllByRole("button", { name: "X" });
+      fireEvent.click(deleteButtons[0]);
+
+      expect(mockDeleteRecord).toHaveBeenCalledTimes(1);
+      expect(mockDeleteRecord).toHaveBeenCalledWith("1");
     });
   });
 });

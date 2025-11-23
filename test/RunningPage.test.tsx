@@ -30,15 +30,24 @@ const mockRepeatState = {
 const mockRunState = {
   isRunning: true,
   currentRepeat: 3,
+  isCountDown: false,
+  countDown: 3,
   reset: jest.fn(),
   setCurrentRepeat: jest.fn(),
   setIsRunning: jest.fn(),
+  setIsCountDown: jest.fn<(value: boolean) => void>(),
+  setCountDown: jest.fn(),
 };
 
 const mockUiState = {
   isSettingModalOpen: false,
   openSettingModal: jest.fn(),
   closeSettingModal: jest.fn(),
+};
+
+const mockTutorialState = {
+  hasSeenTutorial: true,
+  finishTutorial: jest.fn(),
 };
 
 const mockAudioState = {
@@ -64,6 +73,8 @@ jest.mock("../src/store/runStateStore", () => ({
 jest.mock("../src/store/uiStore", () => ({
   useUiStore: (selector: (state: typeof mockUiState) => any) =>
     selector ? selector(mockUiState) : mockUiState,
+  useTutorialStore: (selector: (state: typeof mockTutorialState) => any) =>
+    selector ? selector(mockTutorialState) : mockTutorialState,
 }));
 
 jest.mock("../src/store/audioStore", () => ({
@@ -72,19 +83,21 @@ jest.mock("../src/store/audioStore", () => ({
 }));
 
 describe("RunningPage", () => {
-  // 각 테스트가 실행되기 전에 모든 mock 함수의 호출 기록을 초기화합니다.
   beforeEach(() => {
     jest.clearAllMocks();
+    mockRunState.currentRepeat = 3;
+    mockRunState.isCountDown = false;
+    mockTimerState.isTimerActive = false;
   });
 
   test("초기 상태가 올바르게 렌더링된다", () => {
     render(<RunningPage />);
 
     const clockTimeElement = screen.getByTestId("clock-time-m");
-    expect(clockTimeElement).toHaveTextContent("5");
+    expect(clockTimeElement).toHaveTextContent("05");
 
     const clockTimeElementSeconds = screen.getByTestId("clock-time-s");
-    expect(clockTimeElementSeconds).toHaveTextContent("0");
+    expect(clockTimeElementSeconds).toHaveTextContent("00");
 
     expect(screen.getByText("3")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Start" })).toBeInTheDocument();
@@ -104,7 +117,7 @@ describe("RunningPage", () => {
   test("setting 버튼을 클릭하면 openSettingModal 함수가 호출된다", () => {
     render(<RunningPage />);
 
-    const settingButton = screen.getByRole("button", { name: "setting" });
+    const settingButton = screen.getByTestId("setting-button");
     fireEvent.click(settingButton);
 
     expect(mockUiState.openSettingModal).toHaveBeenCalledTimes(1);
